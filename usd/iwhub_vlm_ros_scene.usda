@@ -1,0 +1,1695 @@
+#usda 1.0
+(
+    customLayerData = {
+        dictionary cameraSettings = {
+            dictionary Front = {
+                double3 position = (51200.00006103517, -1.136868378571413e-11, 0)
+                double radius = 500
+            }
+            dictionary Perspective = {
+                double3 position = (5.225602223501949, 2.786778718898892, 0.4072001499434865)
+                double3 target = (22.850608178045736, -13.7682124156195, 1.4082015991179255)
+            }
+            dictionary Right = {
+                double3 position = (0, -51800.00003051758, -1.1501910541892885e-11)
+                double radius = 500
+            }
+            dictionary Top = {
+                double3 position = (6.103515488575795e-7, 1.4090408398303857, 50934.65016701778)
+                double radius = 46.57648620605469
+            }
+            string boundCamera = "/World/CCTV/cctv_2"
+        }
+        dictionary metricsAssembler = {
+            dictionary "/World/HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01" = {
+            }
+            dictionary "/World/PopUpCone_A04_71cm_PR_NVD_01" = {
+            }
+            dictionary "/World/RackLarge_A7" = {
+            }
+            dictionary "/World/WarningSign_A01_PR_NVD_01" = {
+            }
+            dictionary "/World/WetFloorSign_A01_PR_NVD_01" = {
+            }
+            int version = 1
+        }
+        dictionary navmeshSettings = {
+            double agentHeight = 180
+            double agentRadius = 20
+            bool excludeRigidBodies = 1
+            int ver = 1
+            double voxelCeiling = 460
+        }
+        dictionary omni_layer = {
+            string authoring_layer = "./iwhub_vlm_ros_scene.usda"
+            dictionary locked = {
+            }
+            dictionary muteness = {
+            }
+        }
+        dictionary physicsSettings = {
+        }
+        dictionary renderSettings = {
+            bool "rtx:reflections:enabled" = 0
+            bool "rtx:translucency:enabled" = 0
+        }
+    }
+    defaultPrim = "World"
+    endTimeCode = 1000000.0000000001
+    metersPerUnit = 1
+    startTimeCode = 0
+    timeCodesPerSecond = 60
+    upAxis = "Z"
+)
+
+def Xform "World"
+{
+    def PhysicsScene "PhysicsScene" (
+        prepend apiSchemas = ["PhysxSceneAPI"]
+    )
+    {
+        vector3f physics:gravityDirection = (0, 0, -1)
+        float physics:gravityMagnitude = 9.8
+        uniform token physxScene:broadphaseType = "MBP"
+        uniform token physxScene:collisionSystem = "PCM"
+        bool physxScene:enableCCD = 0
+        bool physxScene:enableGPUDynamics = 0
+        bool physxScene:enableSceneQuerySupport = 0
+        bool physxScene:enableStabilization = 1
+        float physxScene:frictionCorrelationDistance = 0.00025
+        float physxScene:frictionOffsetThreshold = 0.0004
+        uniform uint physxScene:maxPositionIterationCount = 255
+        uniform uint physxScene:maxVelocityIterationCount = 255
+        token physxScene:solverType = "TGS" (
+            allowedTokens = ["PGS", "TGS"]
+        )
+        uint physxScene:timeStepsPerSecond = 60
+    }
+
+    def OmniGraph "ROS_Clock"
+    {
+        token evaluator:type = "execution"
+        token fabricCacheBacking = "Shared"
+        int2 fileFormatVersion = (1, 9)
+        token pipelineStage = "pipelineStageSimulation"
+
+        def OmniGraphNode "on_playback_tick" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            token node:type = "omni.graph.action.OnPlaybackTick"
+            int node:typeVersion = 2
+            custom double outputs:deltaSeconds = 0
+            custom double outputs:frame = 0
+            custom uint outputs:tick = 0 (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            custom double outputs:time = 0
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (-63.80768, 247.38483)
+        }
+
+        def OmniGraphNode "isaac_read_simulation_time" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom bool inputs:resetOnStop = 1
+            custom int64 inputs:swhFrameNumber = 0
+            token node:type = "isaacsim.core.nodes.IsaacReadSimulationTime"
+            int node:typeVersion = 1
+            custom double outputs:simulationTime
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (-108.230484, 560.6558)
+        }
+
+        def OmniGraphNode "ros2_publish_clock" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom uint64 inputs:context = 0
+            prepend uint64 inputs:context.connect = </World/ROS_Clock/ros2_context.outputs:context>
+            custom uint inputs:execIn
+            prepend uint inputs:execIn.connect = </World/ROS_Clock/on_playback_tick.outputs:tick>
+            custom string inputs:nodeNamespace = ""
+            custom string inputs:qosProfile
+            custom uint64 inputs:queueSize = 10
+            custom double inputs:timeStamp = 0
+            prepend double inputs:timeStamp.connect = </World/ROS_Clock/isaac_read_simulation_time.outputs:simulationTime>
+            custom string inputs:topicName = "clock"
+            token node:type = "isaacsim.ros2.bridge.ROS2PublishClock"
+            int node:typeVersion = 1
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (216.8228, 350.64734)
+        }
+
+        def OmniGraphNode "ros2_context" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom uchar inputs:domain_id = 0
+            custom bool inputs:useDomainIDEnvVar = 1
+            token node:type = "isaacsim.ros2.bridge.ROS2Context"
+            int node:typeVersion = 2
+            custom uint64 outputs:context = 0
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (-66.67938, 391.3713)
+        }
+    }
+
+    def "iw_hub_ROS" (
+        prepend payload = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Samples/ROS2/Robots/iw_hub_ROS.usd@
+    )
+    {
+        int physxArticulation:solverPositionIterationCount = 32
+        int physxArticulation:solverVelocityIterationCount = 16
+        quatd xformOp:orient = (1, 0, 0, 0)
+        double3 xformOp:translate = (-6, 0, 0.07999999821186066)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+        over "differential_drive"
+        {
+            over "joint_name_array"
+            {
+                custom token inputs:input0
+                delete token inputs:input0.connect = </World/iw_hub_ROS/differential_drive/joint_wheel_left_name.inputs:value>
+                prepend token inputs:input0.connect = </World/iw_hub_ROS/differential_drive/joint_wheel_left_name.inputs:value>
+                custom token inputs:input1
+                delete token inputs:input1.connect = </World/iw_hub_ROS/differential_drive/joint_wheel_right_name.inputs:value>
+                prepend token inputs:input1.connect = </World/iw_hub_ROS/differential_drive/joint_wheel_right_name.inputs:value>
+            }
+        }
+
+        over "chassis"
+        {
+            vector3f physics:angularVelocity = (0.0012151931, 0.0008318463, 0.0024039343)
+            vector3f physics:velocity = (-0.000384123, -0.000010251664, -0.0000081834705)
+            quatf xformOp:orient = (1, 7.749811e-8, 0.00023637323, -0.0000044293065)
+            float3 xformOp:translate = (-0.0009174347, 5.551786e-8, 2.3841858e-7)
+        }
+
+        over "left_wheel"
+        {
+            vector3f physics:angularVelocity = (0.0012151132, -0.0080639245, 0.0024039326)
+            vector3f physics:velocity = (-0.00039627487, -0.000010251565, -0.0000020407078)
+            quatf xformOp:orient = (0.999984, 5.070993e-8, -0.0056527695, -0.000004429686)
+            double3 xformOp:translate = (-0.0009150505065917969, 0.28963005542755127, 2.8312206268310547e-7)
+        }
+
+        over "right_wheel"
+        {
+            vector3f physics:angularVelocity = (0.0012152577, 0.008026687, 0.0024039352)
+            vector3f physics:velocity = (-0.00037197114, -0.000010251763, -0.000014326235)
+            quatf xformOp:orient = (0.99998385, 5.0580855e-8, -0.0056811455, -0.000004429688)
+            double3 xformOp:translate = (-0.0009198188781738281, -0.2896300256252289, 1.9371509552001953e-7)
+        }
+
+        over "left_swivel"
+        {
+            vector3f physics:angularVelocity = (0.0011914368, 0.0008318542, -0.047835078)
+            vector3f physics:velocity = (-0.0003877165, -0.000015285339, 0.0000036311794)
+            quatf xformOp:orient = (0.99999994, 1.04830264e-7, 0.00023637323, 0.000111143745)
+            double3 xformOp:translate = (-0.6781258583068848, 0.09347978234291077, 0.02300039678812027)
+        }
+
+        over "left_caster"
+        {
+            vector3f physics:angularVelocity = (0.001192296, -0.0030358713, -0.047835078)
+            vector3f physics:velocity = (-0.0003881956, -0.000014585982, 0.000003631408)
+            quatf xformOp:orient = (0.99997836, 8.6127983e-7, -0.0065770093, 0.000111140456)
+            double3 xformOp:translate = (-0.6781415939331055, 0.09347978979349136, -0.009999610483646393)
+        }
+
+        over "right_swivel"
+        {
+            vector3f physics:angularVelocity = (0.0011876712, 0.0008318554, -0.055798404)
+            vector3f physics:velocity = (-0.0003798731, -0.000011502211, -3.3405e-7)
+            quatf xformOp:orient = (0.99999994, 1.0467433e-7, 0.00023637323, 0.000110484376)
+            double3 xformOp:translate = (-0.6781277656555176, -0.09348020702600479, 0.023000366985797882)
+        }
+
+        over "right_caster"
+        {
+            vector3f physics:angularVelocity = (0.0011872557, 0.0027127387, -0.055798404)
+            vector3f physics:velocity = (-0.00038035217, -0.000010802837, -3.3382136e-7)
+            quatf xformOp:orient = (0.9999783, 8.578166e-7, -0.006587749, 0.00011048108)
+            double3 xformOp:translate = (-0.6781435012817383, -0.0934801995754242, -0.00999964028596878)
+        }
+
+        over "lift"
+        {
+            vector3f physics:angularVelocity = (0.0012151931, 0.0008318463, 0.0024039343)
+            vector3f physics:velocity = (-0.00038411687, -0.000010251666, 0.000004815008)
+            quatf xformOp:orient = (1, 7.749811e-8, 0.00023637323, -0.0000044293065)
+            float3 xformOp:translate = (-0.0009174347, 5.551786e-8, 2.4586916e-7)
+        }
+
+        over "camera_mount"
+        {
+            vector3f physics:angularVelocity = (0.0012151931, 0.0008318463, 0.0024039343)
+            vector3f physics:velocity = (-0.00038383255, -0.000010676147, -0.00000818341)
+            quatf xformOp:orient = (-0.70710355, 0.00016708633, -0.0001671959, 0.70711)
+            double3 xformOp:translate = (-0.0009245872497558594, -0.000001972219251911156, 0.020000241696834564)
+
+            over "transporter_camera_third_person" (
+                active = true
+            )
+            {
+                bool omni:kit:cameraLock = 1
+                custom uniform vector3d omni:kit:centerOfInterest = (0, 0, -6.1011452155483905)
+                double3 xformOp:rotateXYZ = (81.31982421875, 0.08981889486312866, 0.39079949259757996)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.041334076578860235, -4.160923728705898, 0.6975854208830372)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateXYZ", "xformOp:scale"]
+            }
+
+            over "transporter_camera_first_person" (
+                active = false
+            )
+            {
+            }
+        }
+
+        over "front_hawk"
+        {
+            over "right_camera_render_product"
+            {
+                custom bool inputs:enabled = 0
+            }
+        }
+    }
+
+    def DistantLight "DistantLight" (
+        prepend apiSchemas = ["ShapingAPI"]
+    )
+    {
+        float inputs:angle = 1
+        float inputs:intensity = 3000
+        float inputs:shaping:cone:angle = 180
+        float inputs:shaping:cone:softness
+        float inputs:shaping:focus
+        color3f inputs:shaping:focusTint
+        asset inputs:shaping:ies:file
+        token visibility = "inherited"
+        quatd xformOp:orient = (-0.6408563820557888, 0.29883623873011966, 0.7018361144661901, -0.08617463914053165)
+        double3 xformOp:scale = (1, 1, 1)
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+    }
+
+    def Xform "CCTV" (
+        kind = "group"
+    )
+    {
+        float3 xformOp:rotateXYZ = (0, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        double3 xformOp:translate = (0, 0, 0)
+        float3 xformOp:translate:pivot = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:translate:pivot", "xformOp:rotateXYZ", "xformOp:scale", "!invert!xformOp:translate:pivot"]
+
+        def Camera "cctv_1" (
+            customData = {
+                dictionary omni = {
+                    dictionary kit = {
+                        bool locked = 1
+                    }
+                }
+            }
+        )
+        {
+            float4[] clippingPlanes (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float2 clippingRange = (0.01, 10000000) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float exposure (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float focalLength = 11.5 (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float focusDistance = 400 (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float fStop (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float horizontalAperture (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float horizontalApertureOffset (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            bool omni:kit:cameraLock = 1 (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            custom uniform vector3d omni:kit:centerOfInterest = (0, 0, -238.24389241414593) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            token projection (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            rel proxyPrim (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            uniform token purpose (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            double shutter:close (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            double shutter:open (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            uniform token stereoRole (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float verticalAperture (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float verticalApertureOffset (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            token visibility (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            quatd xformOp:orient = (0.8219425329137655, 0.4806452156696579, -0.15426458102270305, -0.2638050194425069) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            double3 xformOp:scale = (1, 1, 1) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            double3 xformOp:translate = (-9.885798896901104, -9.226839183515459, 5.478876715595744) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"] (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+        }
+
+        def Camera "cctv_2" (
+            customData = {
+                dictionary omni = {
+                    dictionary kit = {
+                        bool locked = 1
+                    }
+                }
+            }
+        )
+        {
+            float4[] clippingPlanes (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float2 clippingRange = (0.01, 10000000) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float exposure (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float focalLength = 13.400001 (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float focusDistance = 400 (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float fStop (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float horizontalAperture = 20.955 (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float horizontalApertureOffset (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            custom uniform vector3d omni:kit:centerOfInterest = (0, 0, -400) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            token projection (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            rel proxyPrim (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            uniform token purpose (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            double shutter:close (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            double shutter:open (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            uniform token stereoRole (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float verticalAperture (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            float verticalApertureOffset (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            token visibility (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            quatd xformOp:orient = (0.2963821663491072, 0.20672515086677207, 0.5334260770317704, 0.7647737860386014) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            double3 xformOp:scale = (1, 1, 1) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            double3 xformOp:translate = (9.176274991235452, 13.11703350835907, 6.020645167272135) (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"] (
+                customData = {
+                    dictionary omni = {
+                        dictionary kit = {
+                            bool locked = 1
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    def OmniGraph "LiftBarGraph"
+    {
+        token evaluationMode = "Automatic"
+        token evaluator:type = "execution"
+        token fabricCacheBacking = "Shared"
+        int2 fileFormatVersion = (1, 9)
+        token pipelineStage = "pipelineStageSimulation"
+
+        def OmniGraphNode "on_playback_tick" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            token node:type = "omni.graph.action.OnPlaybackTick"
+            int node:typeVersion = 2
+            custom double outputs:deltaSeconds
+            custom double outputs:frame
+            custom uint outputs:tick (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            custom double outputs:time
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (561.9753, 39.5309)
+        }
+
+        def OmniGraphNode "ros2_context" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom uchar inputs:domain_id
+            custom bool inputs:useDomainIDEnvVar
+            token node:type = "isaacsim.ros2.bridge.ROS2Context"
+            int node:typeVersion = 2
+            custom uint64 outputs:context
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (575.0171, 288.32513)
+        }
+
+        def OmniGraphNode "ros2_subscribe_joint_state" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom uint64 inputs:context
+            prepend uint64 inputs:context.connect = </World/LiftBarGraph/ros2_context.outputs:context>
+            custom uint inputs:execIn (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            prepend uint inputs:execIn.connect = </World/LiftBarGraph/on_playback_tick.outputs:tick>
+            custom string inputs:nodeNamespace
+            custom string inputs:qosProfile
+            custom uint64 inputs:queueSize
+            custom string inputs:topicName = "lift_bar_js"
+            token node:type = "isaacsim.ros2.bridge.ROS2SubscribeJointState"
+            int node:typeVersion = 2
+            custom double[] outputs:effortCommand
+            custom uint outputs:execOut (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            custom token[] outputs:jointNames
+            custom double[] outputs:positionCommand
+            custom double outputs:timeStamp
+            custom double[] outputs:velocityCommand
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (963.2559, 164.9313)
+        }
+
+        def OmniGraphNode "articulation_controller" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom double[] inputs:effortCommand
+            custom uint inputs:execIn (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            prepend uint inputs:execIn.connect = </World/LiftBarGraph/on_playback_tick.outputs:tick>
+            custom int[] inputs:jointIndices
+            custom token[] inputs:jointNames
+            prepend token[] inputs:jointNames.connect = </World/LiftBarGraph/ros2_subscribe_joint_state.outputs:jointNames>
+            custom double[] inputs:positionCommand
+            prepend double[] inputs:positionCommand.connect = </World/LiftBarGraph/ros2_subscribe_joint_state.outputs:positionCommand>
+            custom string inputs:robotPath
+            custom rel inputs:targetPrim = </World/iw_hub_ROS> (
+                customData = {
+                    dictionary omni = {
+                        dictionary graph = {
+                            string relType = "target"
+                        }
+                    }
+                }
+            )
+            custom double[] inputs:velocityCommand
+            token node:type = "isaacsim.core.nodes.IsaacArticulationController"
+            int node:typeVersion = 1
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (1463.8549, 55.58215)
+        }
+    }
+
+    def OmniGraph "SetCameraGraph"
+    {
+        token evaluationMode = "Automatic"
+        token evaluator:type = "execution"
+        token fabricCacheBacking = "Shared"
+        int2 fileFormatVersion = (1, 9)
+        token pipelineStage = "pipelineStageSimulation"
+
+        def OmniGraphNode "on_playback_tick" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            token node:type = "omni.graph.action.OnPlaybackTick"
+            int node:typeVersion = 2
+            custom double outputs:deltaSeconds
+            custom double outputs:frame
+            custom uint outputs:tick (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            custom double outputs:time
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (218, 180)
+        }
+
+        def OmniGraphNode "ros2_context" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom uchar inputs:domain_id
+            custom bool inputs:useDomainIDEnvVar
+            token node:type = "isaacsim.ros2.bridge.ROS2Context"
+            int node:typeVersion = 2
+            custom uint64 outputs:context
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (202.84576, 400.13004)
+        }
+
+        def OmniGraphNode "ros2_subscriber" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom uint64 inputs:context
+            prepend uint64 inputs:context.connect = </World/SetCameraGraph/ros2_context.outputs:context>
+            custom uint inputs:execIn (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            prepend uint inputs:execIn.connect = </World/SetCameraGraph/on_playback_tick.outputs:tick>
+            custom string inputs:messageName = "String"
+            custom string inputs:messagePackage = "std_msgs"
+            custom string inputs:messageSubfolder = "msg"
+            custom string inputs:nodeNamespace
+            custom string inputs:qosProfile
+            custom uint64 inputs:queueSize
+            custom string inputs:topicName = "isaac_active_camera"
+            token node:type = "isaacsim.ros2.bridge.ROS2Subscriber"
+            int node:typeVersion = 1
+            custom token outputs:data
+            custom uint outputs:execOut (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (711.51074, 172.3421)
+        }
+
+        def OmniGraphNode "set_active_camera" (
+            prepend apiSchemas = ["NodeGraphNodeAPI"]
+        )
+        {
+            custom uint inputs:execIn (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            prepend uint inputs:execIn.connect = </World/SetCameraGraph/ros2_subscriber.outputs:execOut>
+            custom token inputs:primPath
+            prepend token inputs:primPath.connect = </World/SetCameraGraph/ros2_subscriber.outputs:data>
+            custom token inputs:viewport = "Viewport"
+            token node:type = "omni.graph.ui_nodes.SetActiveViewportCamera"
+            int node:typeVersion = 1
+            custom uint outputs:execOut (
+                customData = {
+                    bool isExecution = 1
+                }
+            )
+            uniform token ui:nodegraph:node:expansionState = "open"
+            uniform float2 ui:nodegraph:node:pos = (1223.3005, 174.69766)
+        }
+    }
+
+    def Xform "Objects" (
+        kind = "group"
+    )
+    {
+        float3 xformOp:rotateXYZ = (0, 0, 0)
+        float3 xformOp:scale = (1, 1, 1)
+        double3 xformOp:translate = (0, 0, 0)
+        float3 xformOp:translate:pivot = (0.65074885, -2.9074976, 1.5049303)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:translate:pivot", "xformOp:rotateXYZ", "xformOp:scale", "!invert!xformOp:translate:pivot"]
+
+        def "RackLarge_A7" (
+            delete payload = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
+            prepend references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
+        )
+        {
+            quatf xformOp:orient = (1, 0, 0, 0)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:scale:unitsResolve = (0.009999999776482582, 0.009999999776482582, 0.009999999776482582)
+            double3 xformOp:translate = (5.077261484978144, -8.557591629504806, 7.189171356003499e-7)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale", "xformOp:scale:unitsResolve"]
+
+            over "RackLargeEmpty_A1"
+            {
+                over "RackLargeEmpty_A1"
+                {
+                    over "RackLegs_A1_2x4_01" (
+                        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+                    )
+                    {
+                        uniform token physics:approximation = "convexHull"
+                        bool physics:collisionEnabled = 1
+                    }
+
+                    over "RackShelf_A2_2x4_01" (
+                        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+                    )
+                    {
+                        uniform token physics:approximation = "convexHull"
+                        bool physics:collisionEnabled = 1
+                    }
+
+                    over "RackShelf_A2_2x4_02" (
+                        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+                    )
+                    {
+                        uniform token physics:approximation = "convexHull"
+                        bool physics:collisionEnabled = 1
+                    }
+                }
+            }
+
+            over "WoodenCrate_A2" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "none"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "WoodenCrate_A1" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "none"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "WoodenCrate_B1" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "none"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "WoodenCrate_B2" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "none"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "WoodenCrate_D1"
+            {
+                over "WoodenCrate_D1" (
+                    prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+                )
+                {
+                    uniform token physics:approximation = "none"
+                    bool physics:collisionEnabled = 1
+                }
+            }
+
+            over "WoodenCrate_A2_01" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "none"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "WoodenCrate_A1_01" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "none"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "WoodenCrate_A1_02" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "none"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "WoodenCrate_A2_02" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "none"
+                bool physics:collisionEnabled = 1
+            }
+        }
+
+        def "RackLarge_A7_01" (
+            delete payload = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
+            prepend references = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
+        )
+        {
+            quatf xformOp:orient = (1, 0, 0, 0)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:scale:unitsResolve = (0.009999999776482582, 0.009999999776482582, 0.009999999776482582)
+            double3 xformOp:translate = (-0.19330979370140589, -8.557591629504806, 7.189171356003499e-7)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale", "xformOp:scale:unitsResolve"]
+
+            over "RackLargeEmpty_A1"
+            {
+                token visibility = "inherited"
+
+                over "RackLargeEmpty_A1"
+                {
+                    over "RackLegs_A1_2x4_01" (
+                        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+                    )
+                    {
+                        uniform token physics:approximation = "convexHull"
+                        bool physics:collisionEnabled = 1
+                    }
+
+                    over "RackShelf_A2_2x4_01" (
+                        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+                    )
+                    {
+                        uniform token physics:approximation = "convexHull"
+                        bool physics:collisionEnabled = 1
+                    }
+
+                    over "RackShelf_A2_2x4_02" (
+                        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+                    )
+                    {
+                        uniform token physics:approximation = "convexHull"
+                        bool physics:collisionEnabled = 1
+                    }
+                }
+            }
+        }
+
+        def "WetFloorSign_A01_PR_NVD_01" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI"]
+            delete payload = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
+            prepend references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
+        )
+        {
+            bool physics:kinematicEnabled = 0
+            bool physics:rigidBodyEnabled = 1
+            quatf xformOp:orient = (1, 0, 0, 0)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:scale:unitsResolve = (0.01, 0.01, 0.01)
+            double3 xformOp:translate = (2.2744312286376953, -6.372478485107422, -6.218585895112483e-7)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale", "xformOp:scale:unitsResolve"]
+
+            over "SM_WetFloorSign_A01_Decals_01" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "convexHull"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "SM_WetFloorSign_A01_01" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "convexHull"
+                bool physics:collisionEnabled = 1
+            }
+        }
+
+        def "WetFloorSign_A01_PR_NVD_02" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI"]
+            delete payload = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
+            prepend references = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
+        )
+        {
+            bool physics:kinematicEnabled = 0
+            bool physics:rigidBodyEnabled = 1
+            quatf xformOp:orient = (1, 0, 0, 0)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:scale:unitsResolve = (0.01, 0.01, 0.01)
+            double3 xformOp:translate = (7.384787857288909, -6.372478485107422, -6.218585895112482e-7)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale", "xformOp:scale:unitsResolve"]
+
+            over "SM_WetFloorSign_A01_Decals_01" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "convexHull"
+                bool physics:collisionEnabled = 1
+            }
+
+            over "SM_WetFloorSign_A01_01" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxTriangleMeshCollisionAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "convexHull"
+                bool physics:collisionEnabled = 1
+            }
+        }
+
+        def "o3dyn_pallet" (
+            delete payload = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
+            prepend references = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
+        )
+        {
+            quatf xformOp:orient = (0.9563047, 0, 0, 0.29237178)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:translate = (-5.500000081956387, 4.053744006107496, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            over "collision_boxes"
+            {
+                token visibility = "inherited"
+            }
+        }
+
+        def "o3dyn_pallet_01" (
+            delete payload = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
+            prepend references = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
+        )
+        {
+            bool physics:rigidBodyEnabled = 1
+            quatf xformOp:orient = (0.60181504, 0, 0, 0.7986355)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:translate = (-2.4930907073825117, 4.053744006107495, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+        }
+
+        def "HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI"]
+            delete payload = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Cones/Heavy-Duty_Traffic/HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01.usd@
+            prepend references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Cones/Heavy-Duty_Traffic/HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01.usd@
+        )
+        {
+            bool physics:kinematicEnabled = 0
+            bool physics:rigidBodyEnabled = 1
+            quatf xformOp:orient = (1, 0, 0, 0)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:scale:unitsResolve = (0.01, 0.01, 0.01)
+            double3 xformOp:translate = (6.660956859588623, 1.288394570350647, -3.750119859091683e-8)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale", "xformOp:scale:unitsResolve"]
+
+            over "HeavyDutyTrafficCone_A05_01" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "PhysxConvexHullCollisionAPI", "PhysicsMeshCollisionAPI"]
+            )
+            {
+                uniform token physics:approximation = "convexHull"
+                bool physics:collisionEnabled = 1
+            }
+        }
+    }
+}
+
+def "Warehouse" (
+    prepend references = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Environments/Simple_Warehouse/warehouse_multiple_shelves.usd@
+)
+{
+    over "Shelf_1" (
+        active = false
+    )
+    {
+    }
+
+    over "PalletBin_01"
+    {
+        double3 xformOp:translate = (-6.099899763656613, 13.679999694228172, 0.35)
+
+        over "Roller"
+        {
+            over "SmallKLT_Visual_156"
+            {
+                token visibility = "inherited"
+            }
+        }
+    }
+
+    over "PalletBin_02"
+    {
+        token visibility = "inherited"
+        double3 xformOp:translate = (4.477997949908945, 13.679999694228172, 0.35)
+    }
+
+    over "Shelf_2" (
+        active = false
+    )
+    {
+    }
+
+    over "Shelf_0" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X17" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X19" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X21" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X23" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X25" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X27" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X28" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X29" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X30" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X31" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X34" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X36" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X37" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X38" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X39" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X40" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X41" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X42" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X43" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X58" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X75" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X76" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X77" (
+        active = false
+    )
+    {
+    }
+
+    over "SM_CeilingA_6X84" (
+        active = false
+    )
+    {
+    }
+
+    over "DistantLight" (
+        active = false
+    )
+    {
+        token visibility = "invisible"
+    }
+
+    over "S_Barcode101" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode102" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode103" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode151" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode153" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode154" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode155" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode156" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode44" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode46" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode47" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode48" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode49" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode50" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode51" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode52" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode886" (
+        active = false
+    )
+    {
+    }
+
+    over "S_Barcode94" (
+        active = false
+    )
+    {
+    }
+}
+
+over "Render" (
+    hide_in_stage_window = true
+)
+{
+    over "RenderProduct_Replicator_01"
+    {
+        over "PostRender"
+        {
+            over "SDGPipeline"
+            {
+                custom uint64 graph:variable:__computeParams (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__computeParams"
+                )
+                custom uint64 graph:variable:__cudaInteropState (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__cudaInteropState"
+                )
+                custom uint64 graph:variable:__cudaStream (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__cudaStream"
+                )
+                custom uint64 graph:variable:__rpInteropState (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__rpInteropState"
+                )
+            }
+        }
+    }
+
+    over "RenderProduct_Replicator"
+    {
+        over "PostRender"
+        {
+            over "SDGPipeline"
+            {
+                custom uint64 graph:variable:__computeParams (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__computeParams"
+                )
+                custom uint64 graph:variable:__cudaInteropState (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__cudaInteropState"
+                )
+                custom uint64 graph:variable:__cudaStream (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__cudaStream"
+                )
+                custom uint64 graph:variable:__rpInteropState (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__rpInteropState"
+                )
+            }
+        }
+    }
+
+    over "RenderProduct_Replicator_03"
+    {
+        over "PostRender"
+        {
+            over "SDGPipeline"
+            {
+                custom uint64 graph:variable:__computeParams (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__computeParams"
+                )
+                custom uint64 graph:variable:__cudaInteropState (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__cudaInteropState"
+                )
+                custom uint64 graph:variable:__cudaStream (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__cudaStream"
+                )
+                custom uint64 graph:variable:__rpInteropState (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__rpInteropState"
+                )
+            }
+        }
+    }
+
+    over "RenderProduct_Replicator_02"
+    {
+        over "PostRender"
+        {
+            over "SDGPipeline"
+            {
+                custom uint64 graph:variable:__computeParams (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__computeParams"
+                )
+                custom uint64 graph:variable:__cudaInteropState (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__cudaInteropState"
+                )
+                custom uint64 graph:variable:__cudaStream (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__cudaStream"
+                )
+                custom uint64 graph:variable:__rpInteropState (
+                    customData = {
+                        token scope = "private"
+                    }
+                    displayName = "__rpInteropState"
+                )
+            }
+        }
+    }
+
+    over "OmniverseKit"
+    {
+        over "HydraTextures"
+        {
+            over "Replicator"
+            {
+                over "PostRender"
+                {
+                }
+            }
+
+            over "Replicator_02"
+            {
+                over "PostRender"
+                {
+                }
+            }
+
+            over "Replicator_01"
+            {
+                over "PostRender"
+                {
+                }
+            }
+        }
+    }
+}
+

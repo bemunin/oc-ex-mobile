@@ -1,0 +1,6 @@
+# Request
+sensor_msgs/Image image
+
+---
+# Response
+string text

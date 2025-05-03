@@ -1,16 +1,16 @@
-# Mini Project: Joy Control + VLM
+# Mini Project: ROS2 Custom Joy Control + VLM
 
 ![Scene from extension oc.cobot.yolo](docs/images/mini-project-vlm-joycontrol.png "Scene from extension oc.cobot.yolo")
 
-This mini project showcases a custom joystick control system and a simple perception engine in NVIDIA Isaac Sim. It includes the following features:
-- Control iwhub robot using Logitech F710 joypad in Nvidia Isaac Sim with customized joystick input handling.
-- A basic Visual Language Model (image-to-text) example integrated as a ROS 2 service.
-- Abitlity to change cameras between CCTV and robot's cameras in the scene by pressing the X and B button on joypad. 
+This ROS2 mini project showcases a custom joystick control inputs to control robot in NVIDIA Isaac Sim with a simple perception engine (VLM). It includes the following features:
+- Controlling iwhub robot using Logitech F710 joypad e.g. robot movement, taking image, increase/descrease speeed, change display cameras and etc. 
+- Image-to-Text visual language model implemented in ROS 2 service.
+- Additional ActionGraph in Isaac Sim Scene to communicate with ROS2 
 
 ## Getting Started
 
 ### Install Isaac Sim 4.5
-Follow step-by-step Isaac sim workstation installation guide with local asset setup from this [tutorial](https://medium.com/@be.munin/speed-up-nvidia-isaac-sim-using-local-assets-a-complete-installation-guide-4121d823ec69)
+Follow step-by-step Isaac sim workstation installation guide with local assets and setting up commandline alias from this [blog post tutorial](https://medium.com/@be.munin/speed-up-nvidia-isaac-sim-using-local-assets-a-complete-installation-guide-4121d823ec69)
 
 ### Install ROS2 Humble
 Follow [ROS and ROS2 Installation](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_ros.html) from Nvidia Isaac Sim offical doc
@@ -24,7 +24,7 @@ Clone this repo https://github.com/isaac-sim/IsaacSim-ros_workspaces and source 
 - Install huggingface-cli for downloading the model. [See this guide](https://huggingface.co/docs/huggingface_hub/main/en/guides/cli).
 
 ### Setup This Project
-```
+```bash
 ## Clone project repo
 git clone https://github.com/bemunin/oc-ex-mobile
 
@@ -39,7 +39,7 @@ colcon build
 ```
 ### Run Simulation
 - Open isaac sim (using alias)
-    ```
+    ```bash
     is
     ```
 - Open file: `usd/iwhub_vlm_ros_scene.usda`
@@ -49,7 +49,7 @@ colcon build
 ### Run ROS2
 
 - Run joy_control_node and vlm service.
-    ```
+    ```bash
     ## launch joy_control node in another terminal
     ros2 launch oc_teleop joy_control_launch.py
 
@@ -58,7 +58,7 @@ colcon build
 
     ```
 - If you want to change vlm service inference device, run this command (no need to rerun image_to_text_service):
-  ```
+  ```bash
    ros2 param set /image_to_text_service device <cpu|gpu|serverless_gpu>
 
     ```

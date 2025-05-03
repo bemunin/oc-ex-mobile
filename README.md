@@ -1,6 +1,6 @@
 # Mini Project: ROS2 Custom Joy Control + VLM
 
-![Scene from extension oc.cobot.yolo](docs/images/mini-project-vlm-joycontrol.png "Scene from extension oc.cobot.yolo")
+![Showcase image](docs/images/proj1-joycontrol-vlm.png "Showcase image")
 
 This ROS2 mini project showcases a custom joystick control inputs to control robot in NVIDIA Isaac Sim with a simple perception engine (VLM). It includes the following features:
 - Controlling iwhub robot using Logitech F710 joypad e.g. robot movement, taking image, increase/descrease speeed, change display cameras and etc. 
@@ -63,3 +63,7 @@ colcon build
 
     ```
     ** serverless_gpu has not yet implemented.
+
+## System Diagram
+
+![System Diagram](docs/images/proj1-system-diagram.png "System Diagram")

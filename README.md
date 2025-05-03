@@ -17,6 +17,9 @@ Follow [ROS and ROS2 Installation](https://docs.isaacsim.omniverse.nvidia.com/la
 
 ### Setup Isaac Sim ROS workspace
 Clone this repo https://github.com/isaac-sim/IsaacSim-ros_workspaces and source it as ROS2 overlay by adding this line in .zshrc or .bashrc.
+```
+source /<your-path>/IsaacSim-ros_workspaces/humble_ws/install/local_setup.zsh
+```
 
 ### Install Huggingface
 - Install transformer via pip. [See this guide](https://huggingface.co/docs/transformers/en/installation)

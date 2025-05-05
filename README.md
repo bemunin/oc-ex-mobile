@@ -16,7 +16,11 @@ Follow step-by-step Isaac sim workstation installation guide with local assets a
 Follow [ROS and ROS2 Installation](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_ros.html) from Nvidia Isaac Sim offical doc
 
 ### Setup Isaac Sim ROS workspace
-Clone this repo https://github.com/isaac-sim/IsaacSim-ros_workspaces and source it as ROS2 overlay by adding this line in .zshrc or .bashrc.
+Clone this repo https://github.com/isaac-sim/IsaacSim-ros_workspaces and source it as ROS2 overlay by adding this line in .bashrc:
+```
+source /<your-path>/IsaacSim-ros_workspaces/humble_ws/install/local_setup.bash
+```
+or in .zshrc
 ```
 source /<your-path>/IsaacSim-ros_workspaces/humble_ws/install/local_setup.zsh
 ```

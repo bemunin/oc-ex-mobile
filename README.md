@@ -69,7 +69,7 @@ colcon build
    ros2 param set /image_to_text_service device <cpu|gpu|serverless_gpu>
 
     ```
-    ** serverless_gpu has not yet implemented.
+    ** serverless_gpu feature has not been implemented yet.
 
 ## System Diagram
 

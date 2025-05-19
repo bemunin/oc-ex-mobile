@@ -3,7 +3,7 @@
 ![Showcase image](docs/images/proj1-joycontrol-vlm.png "Showcase image")
 
 This ROS2 mini project showcases a custom joystick control inputs to control robot in NVIDIA Isaac Sim with a simple perception engine (VLM). It includes the following features:
-- Controlling iwhub robot using Logitech F710 joypad e.g. robot movement, taking image, increase/descrease speeed, change display cameras and etc. 
+- Controlling iwhub robot using Logitech F710 joypad e.g. robot movement, taking image, increase/descrease speed, change display cameras and etc. 
 - Image-to-Text visual language model implemented in ROS 2 service.
 - Additional ActionGraph in Isaac Sim Scene to communicate with ROS2 
 

@@ -3,7 +3,7 @@
 ![Showcase image](docs/images/proj1-joycontrol-vlm.png "Showcase image")
 
 This ROS2 mini project showcases a custom joystick control inputs to control robot in NVIDIA Isaac Sim with a simple perception engine (VLM). It includes the following features:
-- Controlling iwhub robot using Logitech F710 joypad e.g. robot movement, taking image, increase/descrease speeed, change display cameras and etc. 
+- Controlling iwhub robot using Logitech F710 joypad e.g. robot movement, taking image, increase/descrease speed, change display cameras and etc. 
 - Image-to-Text visual language model implemented in ROS 2 service.
 - Additional ActionGraph in Isaac Sim Scene to communicate with ROS2 
 
@@ -16,7 +16,11 @@ Follow step-by-step Isaac sim workstation installation guide with local assets a
 Follow [ROS and ROS2 Installation](https://docs.isaacsim.omniverse.nvidia.com/latest/installation/install_ros.html) from Nvidia Isaac Sim offical doc
 
 ### Setup Isaac Sim ROS workspace
-Clone this repo https://github.com/isaac-sim/IsaacSim-ros_workspaces and source it as ROS2 overlay by adding this line in .zshrc or .bashrc.
+Clone this repo https://github.com/isaac-sim/IsaacSim-ros_workspaces and source it as ROS2 overlay by adding this line in .bashrc:
+```
+source /<your-path>/IsaacSim-ros_workspaces/humble_ws/install/local_setup.bash
+```
+or in .zshrc
 ```
 source /<your-path>/IsaacSim-ros_workspaces/humble_ws/install/local_setup.zsh
 ```
@@ -65,7 +69,7 @@ colcon build
    ros2 param set /image_to_text_service device <cpu|gpu|serverless_gpu>
 
     ```
-    ** serverless_gpu has not yet implemented.
+    ** serverless_gpu feature has not been implemented yet.
 
 ## System Diagram
 

@@ -159,7 +159,8 @@ def Xform "World"
     }
 
     def "iw_hub_ROS" (
-        prepend payload = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Samples/ROS2/Robots/iw_hub_ROS.usd@
+        delete payload = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Samples/ROS2/Robots/iw_hub_ROS.usd@
+        prepend payload = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Samples/ROS2/Robots/iw_hub_ROS.usd@
     )
     {
         int physxArticulation:solverPositionIterationCount = 32
@@ -950,7 +951,8 @@ def Xform "World"
 
         def "RackLarge_A7" (
             delete payload = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
-            prepend references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
+            delete references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
+            prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
         )
         {
             quatf xformOp:orient = (1, 0, 0, 0)
@@ -1067,7 +1069,8 @@ def Xform "World"
 
         def "RackLarge_A7_01" (
             delete payload = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
-            prepend references = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
+            delete references = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
+            prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/ArchVis/Industrial/Racks/RackLarge_A7.usd@
         )
         {
             quatf xformOp:orient = (1, 0, 0, 0)
@@ -1112,7 +1115,8 @@ def Xform "World"
         def "WetFloorSign_A01_PR_NVD_01" (
             prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI"]
             delete payload = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
-            prepend references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
+            delete references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
+            prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
         )
         {
             bool physics:kinematicEnabled = 0
@@ -1143,7 +1147,8 @@ def Xform "World"
         def "WetFloorSign_A01_PR_NVD_02" (
             prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI"]
             delete payload = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
-            prepend references = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
+            delete references = @file:/media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
+            prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/DigitalTwin/Assets/Warehouse/Safety/Floor_Signs/WetFloor_A/WetFloorSign_A01_PR_NVD_01.usd@
         )
         {
             bool physics:kinematicEnabled = 0
@@ -1173,7 +1178,8 @@ def Xform "World"
 
         def "o3dyn_pallet" (
             delete payload = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
-            prepend references = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
+            delete references = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
+            prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
         )
         {
             quatf xformOp:orient = (0.9563047, 0, 0, 0.29237178)
@@ -1189,7 +1195,8 @@ def Xform "World"
 
         def "o3dyn_pallet_01" (
             delete payload = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
-            prepend references = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
+            delete references = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
+            prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Props/Pallet/o3dyn_pallet.usd@
         )
         {
             bool physics:rigidBodyEnabled = 1
@@ -1202,7 +1209,8 @@ def Xform "World"
         def "HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01" (
             prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI"]
             delete payload = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Cones/Heavy-Duty_Traffic/HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01.usd@
-            prepend references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Cones/Heavy-Duty_Traffic/HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01.usd@
+            delete references = @../../../../../../media/bemunin/omnicraft/nvidia_assets/Assets/DigitalTwin/Assets/Warehouse/Safety/Cones/Heavy-Duty_Traffic/HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01.usd@
+            prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/DigitalTwin/Assets/Warehouse/Safety/Cones/Heavy-Duty_Traffic/HeavyDutyTrafficCone_A05_71cm_PR_V_NVD_01.usd@
         )
         {
             bool physics:kinematicEnabled = 0
@@ -1225,7 +1233,13 @@ def Xform "World"
 }
 
 def "Warehouse" (
-    prepend references = @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Environments/Simple_Warehouse/warehouse_multiple_shelves.usd@
+    delete references = [
+        @../../../../../../media/bemunin/omnicraft/isaacsim_assets/Assets/Isaac/4.5/Isaac/Environments/Simple_Warehouse/warehouse_multiple_shelves.usd@,
+        @/Assets/Isaac/4.5/Isaac/Environments/Simple_Warehouse/warehouse_multiple_shelves.usd@,
+        @/Isaac/Environments/Simple_Warehouse/warehouse_multiple_shelves.usd@,
+        @/Assets/Isaac/Environments/Simple_Warehouse/warehouse_multiple_shelves.usd@
+    ]
+    prepend references = @https://omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/4.5/Isaac/Environments/Simple_Warehouse/warehouse_multiple_shelves.usd@
 )
 {
     over "Shelf_1" (
